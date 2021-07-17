@@ -79,6 +79,7 @@ public class DbCategory {
             while (resultSet.next())
             {
                 categoryList.add(new Category(
+                        resultSet.getInt("id"),
                         resultSet.getString("title"),
                         resultSet.getString("description")));
             }
@@ -113,7 +114,7 @@ public class DbCategory {
         {
             openConnection();
             int offset=(step-1)*limit;
-            String query = "select * from order  by id categoryes limit?,?";
+            String query = "select * from categoryes order by id  limit ?,?";
             statement = connection.prepareStatement(query);
             statement.setInt(1,offset);
             statement.setInt(2,limit);
@@ -126,6 +127,7 @@ public class DbCategory {
             while (resultSet.next())
             {
                 categories.add(new Category(
+                        resultSet.getInt("id"),
                         resultSet.getString("title"),
                         resultSet.getString("description")));
             }

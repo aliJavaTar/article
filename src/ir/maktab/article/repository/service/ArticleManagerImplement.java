@@ -16,13 +16,11 @@ public class ArticleManagerImplement implements ArticleManage
         dbArticle = new DbArticle();
     }
     @Override
-    public boolean insertArticle(String title,
-                                 String brief, String content,
-                                 String createDate, boolean isPublished,
-                                 String lastUpdate, String publishDate) throws SQLException
+    public boolean insertArticle(String title, String brief, String content,
+                                   int userId, int categoryId) throws SQLException
     {
 
-      return   dbArticle.insertArticle(new Article(title,brief,content,createDate,isPublished,lastUpdate,publishDate));
+      return   dbArticle.insertArticle(new Article( title, brief, content, userId, categoryId));
     }
 
     @Override
@@ -46,13 +44,10 @@ public class ArticleManagerImplement implements ArticleManage
     }
 
     @Override
-    public boolean update(int id, String title,
-                          String brief,
-                          String content,
-                          String createDate,
-                          boolean isPublished,
-                          String lastUpdate,
-                          String publishDate) throws SQLException {
-        return dbArticle.updateArticle(id,new Article(title,brief,content,createDate,isPublished,lastUpdate,publishDate));
+    public boolean update(int id ,String title, String brief, String content,
+                          boolean isPublished, String publishDate,
+                          int categoryIde) throws SQLException
+    {
+        return dbArticle.updateArticle(id,new Article( title,  brief,  content,  isPublished,  publishDate,  categoryIde));
     }
 }

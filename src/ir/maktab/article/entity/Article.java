@@ -9,6 +9,8 @@ public class Article {
     private boolean isPublished;
     private String lastUpdate;
     private String publishDate;
+    private int userId;
+    private int categoryId;
 
     public boolean getIsPublished() {
         return isPublished;
@@ -17,17 +19,26 @@ public class Article {
     public Article() {
     }
 
-    public Article(String title, String brief, String content, String createDate, boolean isPublished, String lastUpdate, String publishDate) {
+
+    public Article(String title, String brief, String content, boolean isPublished, String publishDate, int categoryId) {
         this.title = title;
         this.brief = brief;
         this.content = content;
-        this.createDate = createDate;
         this.isPublished = isPublished;
-        this.lastUpdate = lastUpdate;
         this.publishDate = publishDate;
+        this.categoryId = categoryId;
     }
 
-    public Article(int id, String title, String brief, String content, String createDate, boolean isPublished, String lastUpdate, String publishDate) {
+    public Article(String title, String brief, String content, int userId, int categoryId) {
+        this.title = title;
+        this.brief = brief;
+        this.content = content;
+        this.userId = userId;
+        this.categoryId = categoryId;
+    }
+
+    public Article(int id, String title, String brief, String content, String createDate, boolean isPublished, String lastUpdate,
+                   String publishDate, int userId, int categoryId) {
         this.id = id;
         this.title = title;
         this.brief = brief;
@@ -36,7 +47,27 @@ public class Article {
         this.isPublished = isPublished;
         this.lastUpdate = lastUpdate;
         this.publishDate = publishDate;
+        this.userId = userId;
+        this.categoryId = categoryId;
     }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public int getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
+    }
+
+
 
     public int getId() {
         return id;
@@ -98,5 +129,21 @@ public class Article {
 
     public void setPublishDate(String publishDate) {
         this.publishDate = publishDate;
+    }
+
+    @Override
+    public String toString() {
+        return "Article{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", brief='" + brief + '\'' +
+                ", content='" + content + '\'' +
+                ", createDate='" + createDate + '\'' +
+                ", isPublished=" + isPublished +
+                ", lastUpdate='" + lastUpdate + '\'' +
+                ", publishDate='" + publishDate + '\'' +
+                ", userId=" + userId +
+                ", categoryId=" + categoryId +
+                '}';
     }
 }

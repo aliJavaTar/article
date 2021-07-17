@@ -5,7 +5,6 @@ import ir.maktab.article.repository.base.Category;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 
 public class CategoryManagerImplement implements Category {
     DbCategory dbCategory;
@@ -20,12 +19,12 @@ public class CategoryManagerImplement implements Category {
     }
 
     @Override
-    public ArrayList<Category> getAllCategory() throws SQLException {
+    public ArrayList<ir.maktab.article.entity.Category> getAllCategory() throws SQLException {
        return(ArrayList) dbCategory.findAllCategory();
     }
 
     @Override
-    public List<Category> getAllCategory(int count, int step) throws SQLException {
+    public ArrayList<ir.maktab.article.entity.Category> getAllCategory(int count, int step) throws SQLException {
         return(ArrayList) dbCategory.findAllUser(count, step);
     }
 

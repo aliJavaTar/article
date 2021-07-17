@@ -8,17 +8,17 @@ import java.util.List;
 
 public interface ArticleManage {
 
-    boolean insertArticle(String title,
-                          String brief, String content,
-                          String createDate, boolean isPublished,
-                          String lastUpdate, String publishDate) throws SQLException;
+    boolean insertArticle(String title, String brief, String content
+            , int userId, int categoryId) throws SQLException;
 
     List<Article> getAllArticle() throws SQLException;
-    List<Article> getAllArticle(int count,int step) throws SQLException;
+
+    List<Article> getAllArticle(int count, int step) throws SQLException;
 
     Article getArticleById(int id) throws SQLException;
 
     boolean removeArticle(int id) throws SQLException;
 
-    boolean update(int id,String title, String brief, String content, String createDate, boolean isPublished, String lastUpdate, String publishDate) throws SQLException;
+    boolean update(int id, String title, String brief, String content,
+                   boolean isPublished, String publishDate, int categoryIde) throws SQLException;
 }

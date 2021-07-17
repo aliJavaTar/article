@@ -28,8 +28,7 @@ public class DbArticle {
         statement = connection.prepareStatement(query);
         statement.setInt(1, id);
         ResultSet resultSet = statement.executeQuery();
-        while (resultSet.next())
-        {
+        while (resultSet.next()) {
             article.setId(id);
             article.setTitle(resultSet.getString("title"));
             article.setBrief(resultSet.getString("brief"));
@@ -38,6 +37,8 @@ public class DbArticle {
             article.setPublished(resultSet.getBoolean("published"));
             article.setPublishDate(resultSet.getString("publish_date"));
             article.setLastUpdate(resultSet.getString("last_update"));
+            article.setUserId(resultSet.getInt("user_id"));
+            article.setCategoryId(resultSet.getInt("category_id"));
         }
         closeConnection();
         return article;
@@ -45,16 +46,17 @@ public class DbArticle {
 
     public boolean updateArticle(int id, Article article) throws SQLException {
         openConnection();
-        String query = "update articles set title=?,brief=?,content=?,createDate=?,isPublished=?,lastUpdate=?,publishDate=? where id=?";
+        String query = "update articles set title=?,brief=?,content=?,is_published=?,publish_date=?,category_id=? where id=?";
         statement = connection.prepareStatement(query);
+
         statement.setString(1, article.getTitle());
         statement.setString(2, article.getBrief());
         statement.setString(3, article.getContent());
-        statement.setString(4, article.getCreateDate());
-        statement.setBoolean(5, article.getIsPublished());
-        statement.setString(6, article.getLastUpdate());
-        statement.setString(7, article.getPublishDate());
-        statement.setInt(8,id);
+        statement.setBoolean(4, article.getIsPublished());
+        statement.setString(5, article.getPublishDate());
+        statement.setInt(6, article.getCategoryId());
+        statement.setInt(7, id);
+
         if (statement.executeUpdate() > 0) {
             System.out.println("update done");
             closeConnection();
@@ -85,14 +87,17 @@ public class DbArticle {
         ResultSet resultSet = statement.executeQuery();
         List<Article> arrayList = new ArrayList<>();
         while (resultSet.next()) {
-            arrayList.add(new Article(resultSet.getInt("id"),
+            arrayList.add(new Article(
+                    resultSet.getInt("id"),
                     resultSet.getString("title"),
                     resultSet.getString("brief"),
                     resultSet.getString("content"),
-                    resultSet.getString("createDate"),
-                    resultSet.getBoolean("isPublished"),
-                    resultSet.getString("lastUpdate"),
-                    resultSet.getString("publishDate")));
+                    resultSet.getString("create_date"),
+                    resultSet.getBoolean("is_published"),
+                    resultSet.getString("last_update"),
+                    resultSet.getString("publish_date"),
+                    resultSet.getInt("user_id"),
+                    resultSet.getInt("category_id")));
         }
         closeConnection();
         return arrayList;
@@ -101,19 +106,15 @@ public class DbArticle {
 
     public boolean insertArticle(Article article) throws SQLException {
         openConnection();
-        String query = "insert into articles(title,brief," +
-                "content,createDate,isPublished,lastUpdate,publishDate) values (?,?,?,?,?,?,?)";
+        String query = "insert into articles(title,brief,content,user_id,category_id) values (?,?,?,?,?)";
         statement = connection.prepareStatement(query);
         statement.setString(1, article.getTitle());
         statement.setString(2, article.getBrief());
         statement.setString(3, article.getContent());
-        statement.setString(4, article.getCreateDate());
-        statement.setBoolean(5, article.getIsPublished());
-        statement.setString(6,article.getLastUpdate());
-        statement.setString(7,article.getPublishDate());
+        statement.setInt(4, article.getUserId());
+        statement.setInt(5, article.getCategoryId());
 
-        if (statement.executeUpdate() > 0)
-        {
+        if (statement.executeUpdate() > 0) {
             System.out.println("insert done ");
             closeConnection();
             return true;
@@ -136,15 +137,19 @@ public class DbArticle {
 
         ArrayList<Article> articles = new ArrayList<>();
 
-        while (resultSet.next()) {
-            articles.add(new Article(resultSet.getInt("id"),
+        while (resultSet.next())
+        {
+            articles.add(new Article(
+                    resultSet.getInt("id"),
                     resultSet.getString("title"),
                     resultSet.getString("brief"),
                     resultSet.getString("content"),
                     resultSet.getString("createDate"),
                     resultSet.getBoolean("isPublished"),
                     resultSet.getString("lastUpdate"),
-                    resultSet.getString("publishDate")));
+                    resultSet.getString("publishDate"),
+                    resultSet.getInt("user_id"),
+                    resultSet.getInt("category_id")));
         }
         closeConnection();
         return articles;

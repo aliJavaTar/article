@@ -34,7 +34,7 @@ public class DbArticle {
             article.setBrief(resultSet.getString("brief"));
             article.setContent(resultSet.getString("content"));
             article.setCreateDate(resultSet.getString("create_date"));
-            article.setPublished(resultSet.getBoolean("published"));
+            article.setPublished(resultSet.getBoolean("is_published"));
             article.setPublishDate(resultSet.getString("publish_date"));
             article.setLastUpdate(resultSet.getString("last_update"));
             article.setUserId(resultSet.getInt("user_id"));

@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface UserManage {
 
-    boolean insertUser(String username, String password, int nationalCode, int birthday) throws SQLException;
+    boolean insertUser(String username, String password, int nationalCode, int birthday,boolean isActive) throws SQLException;
 
     List<User> getAllUser() throws SQLException;
 
@@ -17,7 +17,7 @@ public interface UserManage {
 
     boolean removeUser(int id) throws SQLException;
 
-    boolean update(int id,String username, String password, int nationalCode, int birthday) throws SQLException;
+    boolean update(int id,String username, String password, int nationalCode, int birthday,boolean isActive) throws SQLException;
 
 
 }

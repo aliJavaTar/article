@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DbUser {
-    private String url = "jdbc:mysql://localhost:3306/ali";
+    private String url = "jdbc:mysql://localhost:3306/hw7";
     private String username = "root";
     private String password = "ALI33";
     private Connection connection;
@@ -29,10 +29,12 @@ public class DbUser {
         statement.setInt(1, id);
         ResultSet resultSet = statement.executeQuery();
         while (resultSet.next()) {
+            user.setId(id);
             user.setUsername(resultSet.getString("username"));
             user.setPassword(resultSet.getString("password"));
             user.setNationalCode(resultSet.getInt("national_code"));
             user.setBirthday(resultSet.getInt("birthday"));
+            user.setActive(resultSet.getBoolean("is_active"));
         }
         closeConnection();
         return user;
@@ -40,13 +42,16 @@ public class DbUser {
 
     public boolean updateUser(int id, User user) throws SQLException {
         openConnection();
-        String query = "update users set username=?,password=?,national_code=?,birthday=? where id=?";
+        String query = "update users set username=?,password=?,national_code=?,birthday=?,is_active=? where id=?";
         statement = connection.prepareStatement(query);
         statement.setString(1, user.getUsername());
         statement.setString(2, user.getPassword());
         statement.setInt(3, user.getNationalCode());
         statement.setInt(4, user.getBirthday());
-        statement.setInt(5, user.getId());
+        statement.setBoolean(5, user.getIsActive());
+        statement.setInt(6, id);
+
+
         if (statement.executeUpdate() > 0) {
             System.out.println("update done");
             closeConnection();
@@ -69,43 +74,36 @@ public class DbUser {
         } else return false;
     }
 
-    public List<User> findAllUser() throws SQLException
-    {
+    public List<User> findAllUser() throws SQLException {
         openConnection();
 
         String query = "select * from  users";
         statement = connection.prepareStatement(query);
         ResultSet resultSet = statement.executeQuery();
         ArrayList<User> users = new ArrayList<>();
-        while (resultSet.next())
-        {
-            users.add(new User(resultSet.getInt("id"),
-                    resultSet.getString("userName"),
-                    resultSet.getString("password"),
-                    resultSet.getInt("national_code"),
-                    resultSet.getInt("birthday")));
+        while (resultSet.next()) {
+            users.add(new User(resultSet.getInt("id"), resultSet.getString("userName"),
+                    resultSet.getString("password"), resultSet.getInt("national_code"),
+                    resultSet.getInt("birthday"), resultSet.getBoolean("is_active")));
         }
         closeConnection();
         return users;
     }
 
-    public boolean insertUser(User user) throws SQLException
-    {
+    public boolean insertUser(User user) throws SQLException {
         openConnection();
-        String query="insert into users(userName,password,national_code,birthday) values (?,?,?,?)";
-        statement=connection.prepareStatement(query);
-        statement.setString(1,user.getUsername());
+        String query = "insert into users(userName,password,national_code,birthday) values (?,?,?,?)";
+        statement = connection.prepareStatement(query);
+        statement.setString(1, user.getUsername());
         statement.setString(2, user.getPassword());
-        statement.setInt(3,user.getNationalCode());
-        statement.setInt(4,user.getBirthday());
+        statement.setInt(3, user.getNationalCode());
+        statement.setInt(4, user.getBirthday());
 
-        if (statement.executeUpdate()>0)
-        {
+        if (statement.executeUpdate() > 0) {
             System.out.println("insert done ");
             closeConnection();
             return true;
-        }else
-        {
+        } else {
             System.out.println("insert filed");
             closeConnection();
             return false;
@@ -113,24 +111,22 @@ public class DbUser {
 
     }
 
-    public List<User> findAllUser(int limit,int step) throws SQLException
-    {
+    public List<User> findAllUser(int limit, int step) throws SQLException {
         openConnection();
-        int offset=(step-1)*limit;
-        String query = "select * from order  by id users limit?,?";
-
-        statement.setInt(1,offset);
-        statement.setInt(2,limit);
-
+        int offset = (step - 1) * limit;
+        String query = "select * from users order by id  limit ?,?";
         statement = connection.prepareStatement(query);
+        statement.setInt(1, offset);
+        statement.setInt(2, limit);
+
         ResultSet resultSet = statement.executeQuery();
 
         ArrayList<User> users = new ArrayList<>();
 
-        while (resultSet.next())
-        {
+        while (resultSet.next()) {
             users.add(new User(resultSet.getInt("id"), resultSet.getString("userName"),
-                    resultSet.getString("password"), resultSet.getInt("national_code"), resultSet.getInt("birthday")));
+                    resultSet.getString("password"), resultSet.getInt("national_code"),
+                    resultSet.getInt("birthday"), resultSet.getBoolean("is_active")));
         }
         closeConnection();
         return users;

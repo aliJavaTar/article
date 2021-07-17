@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DbCategory {
-        private String url = "jdbc:mysql://localhost:3306/ali";
+        private String url = "jdbc:mysql://localhost:3306/hw7";
         private String username = "root";
         private String password = "ALI33";
         private Connection connection;
@@ -31,6 +31,7 @@ public class DbCategory {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next())
             {
+                category.setId(id);
                 category.setTitle(resultSet.getString("title"));
                 category.setDescription(resultSet.getString("description"));
             }
@@ -44,6 +45,7 @@ public class DbCategory {
             statement = connection.prepareStatement(query);
             statement.setString(1, category.getTitle());
             statement.setString(2,  category.getDescription());
+            statement.setInt(3,id);
             if (statement.executeUpdate() > 0) {
                 System.out.println("update done");
                 closeConnection();
@@ -112,11 +114,11 @@ public class DbCategory {
             openConnection();
             int offset=(step-1)*limit;
             String query = "select * from order  by id categoryes limit?,?";
-
+            statement = connection.prepareStatement(query);
             statement.setInt(1,offset);
             statement.setInt(2,limit);
 
-            statement = connection.prepareStatement(query);
+
             ResultSet resultSet = statement.executeQuery();
 
             ArrayList<Category> categories = new ArrayList<>();

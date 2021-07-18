@@ -45,8 +45,8 @@ public class UserManagerImplement implements UserManage {
     }
 
     @Override
-    public boolean update(int id, String username, String password, int nationalCode, int birthday,boolean isActive) throws SQLException
+    public boolean update(int id, String username, String password, int nationalCode, int birthday,boolean isActive,int wallet) throws SQLException
     {
-      return database.updateUser(id,new User(username,password,nationalCode,birthday,isActive));
+      return database.updateUser(id,new User(username,password,nationalCode,birthday,isActive,wallet));
     }
 }

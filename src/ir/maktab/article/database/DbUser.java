@@ -42,14 +42,15 @@ public class DbUser {
 
     public boolean updateUser(int id, User user) throws SQLException {
         openConnection();
-        String query = "update users set username=?,password=?,national_code=?,birthday=?,is_active=? where id=?";
+        String query = "update users set username=?,password=?,wallet=?,national_code=?,birthday=?,is_active=? where id=?";
         statement = connection.prepareStatement(query);
         statement.setString(1, user.getUsername());
         statement.setString(2, user.getPassword());
-        statement.setInt(3, user.getNationalCode());
-        statement.setInt(4, user.getBirthday());
-        statement.setBoolean(5, user.getIsActive());
-        statement.setInt(6, id);
+        statement.setInt(3,user.getWallet());
+        statement.setInt(4, user.getNationalCode());
+        statement.setInt(5, user.getBirthday());
+        statement.setBoolean(6, user.getIsActive());
+        statement.setInt(7, id);
 
 
         if (statement.executeUpdate() > 0) {
@@ -148,6 +149,7 @@ public class DbUser {
             user.setId(resultSet.getInt("id"));
             user.setUsername(resultSet.getString("username"));
             user.setPassword(resultSet.getString("password"));
+            user.setWallet(resultSet.getInt("wallet"));
             user.setNationalCode(resultSet.getInt("national_code"));
             user.setBirthday(resultSet.getInt("birthday"));
             user.setActive(resultSet.getBoolean("is_active"));

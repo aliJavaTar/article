@@ -19,10 +19,9 @@ import java.util.regex.Pattern;
 public class SystemArticle {
     static Scanner input = new Scanner(System.in);
 
-    public void startMenu() throws SQLException
-    {
+    public void startMenu() throws SQLException {
         systemMenu();
-        System.out.println("choice one of them: (between 1 or 4 )");
+        System.out.println("choice one of them: (between 1 or 5 )");
         int select = input.nextInt();
         switch (select) {
             case 1:
@@ -37,20 +36,48 @@ public class SystemArticle {
             case 4:
                 loginAdmin();
                 break;
+            case 5:
+                chargeWallet();
+                break;
             default:
                 startMenu();
         }
     }
 
-    private void loginAdmin() {}
+    private void chargeWallet() throws SQLException {
+        UserManagerImplement userEdit = new UserManagerImplement();
+        System.out.println(" سر کیفی عزیز ; پول بریز جون دل");
+        System.out.println("enter username");
+        String username = input.next();
 
-    private void showArticle() throws SQLException
-    {
+        User user = userEdit.getUserByUserName(username);
+
+        if (user.getId() == 0)
+        {
+            System.out.println("user not exist...");
+            System.exit(0);
+        }
+        System.out.println("how much money جون دل");
+        int money = input.nextInt();
+        if (money> 0) {
+            money += user.getWallet();
+            user.setWallet(money);
+
+            userEdit.update(user.getId(), username, user.getPassword(), user.getNationalCode(), user.getBirthday(), user.getIsActive(), user.getWallet());
+            if (user.getWallet() > 5000)
+                System.out.println("جون منی جون دل");
+            else System.out.println("همش همین");
+        }else System.out.println("خودتی");
+    }
+
+    private void loginAdmin() {
+    }
+
+    private void showArticle() throws SQLException {
         ArticleManagerImplement articles = new ArticleManagerImplement();
         List<Article> articleList = articles.getAllArticle();
         Article article;
-        for (int i = 0; i < articleList.size(); i++)
-        {
+        for (int i = 0; i < articleList.size(); i++) {
             System.out.println("id: " + articleList.get(i).getId() + " title : "
                     + articleList.get(i).getTitle() + " Brief: " + articleList.get(i).getBrief());
             System.out.println("---------------------------------------------------------");
@@ -68,8 +95,7 @@ public class SystemArticle {
             System.out.println("not found");
     }
 
-    private void register() throws SQLException
-    {
+    private void register() throws SQLException {
         UserManagerImplement userRegister = new UserManagerImplement();
         System.out.println("register page...");
         User user = inputUserField();
@@ -78,42 +104,37 @@ public class SystemArticle {
 
         startMenu();
     }
+
     int authId;
-    private void loginUser() throws SQLException
-    {
-        UserManagerImplement userDb=new UserManagerImplement();
-        User user ;
+
+    private void loginUser() throws SQLException {
+        UserManagerImplement userDb = new UserManagerImplement();
+        User user;
         System.out.println("enter you username ");
-        String username=input.next();
+        String username = input.next();
         System.out.println("enter you password ");
-        String password=input.next();
-        user =  userDb.getUserByUserName(username);
-        authId= user.getId();
-        if (user.getId()==0)
-        {
+        String password = input.next();
+        user = userDb.getUserByUserName(username);
+        authId = user.getId();
+        if (user.getId() == 0) {
             System.out.println("user not exist");
             System.exit(0);
         }
-        if (password.equals(user.getPassword()))
-        {
-            if (!user.getIsActive())
-            {
+        if (password.equals(user.getPassword())) {
+            if (!user.getIsActive()) {
                 System.out.println("wait for account verify..");
                 System.exit(0);
             }
             userLoginMenu(user);
-        }
-        else
+        } else
             System.out.println("username or password false");
     }
 
-    private void userLoginMenu(User user) throws SQLException
-    {
+    private void userLoginMenu(User user) throws SQLException {
         showUserLoginMenu();
         System.out.println("choice one of them: ");
-        int select=input.nextInt();
-        switch (select)
-        {
+        int select = input.nextInt();
+        switch (select) {
             case 1:
                 showSpecificArticle();
                 break;
@@ -127,102 +148,95 @@ public class SystemArticle {
                 //edit password or edit all property
                 System.out.println();
                 break;
-            default:userLoginMenu(user);
-            break;
+            default:
+                userLoginMenu(user);
+                break;
         }
     }
 
 
-    private void showSpecificArticle() throws SQLException
-    {
-     ArticleManagerImplement article = new ArticleManagerImplement();
-     ArrayList<Article> articles = (ArrayList<Article>) article.getArticlesByUserId(authId);
-        for (int i = 0; i <articles.size(); i++)
-        {
+    private void showSpecificArticle() throws SQLException {
+        ArticleManagerImplement article = new ArticleManagerImplement();
+        ArrayList<Article> articles = (ArrayList<Article>) article.getArticlesByUserId(authId);
+        for (int i = 0; i < articles.size(); i++) {
             System.out.println(articles.get(i));
         }
 
     }
 
 
-    private void createNewArticle() throws SQLException
-    {
+    private void createNewArticle() throws SQLException {
         Article article = new Article();
         Category category = new Category();
         ArticleManagerImplement creatArticle = new ArticleManagerImplement();
         //  showCategory
-        CategoryManagerImplement  createCategory= showCategory();
+        CategoryManagerImplement createCategory = showCategory();
         System.out.println("Do you want new category? (yes or no)");
-        String answer=input.next();
-        if (answer.equals("yes"))
-        {
-              category= inputCategoryField(category);
-              createCategory.insertCategory(category.getTitle(),category.getDescription());
-              showCategory();
-              createArticle( createCategory,article, creatArticle,authId);
+        String answer = input.next();
+        if (answer.equals("yes")) {
+            category = inputCategoryField(category);
+            createCategory.insertCategory(category.getTitle(), category.getDescription());
+            showCategory();
+            createArticle(createCategory, article, creatArticle, authId);
 
-        }  else if (answer.equals("no"))
-        {
-            createArticle( createCategory,article, creatArticle,authId);
+        } else if (answer.equals("no")) {
+            createArticle(createCategory, article, creatArticle, authId);
         }
     }
-    private void createArticle(CategoryManagerImplement createCategory, Article article , ArticleManagerImplement creatArticle,int authId)
-            throws SQLException
-    {
+
+    private void createArticle(CategoryManagerImplement createCategory, Article article, ArticleManagerImplement creatArticle, int authId)
+            throws SQLException {
         System.out.println("Which one category do you want [ Enter Id Category ] ?");
-        int categoryId =input.nextInt();
+        int categoryId = input.nextInt();
         Category categoryById = createCategory.getCategoryById(categoryId);
         article = inputArticleField(article);
-        if (categoryById!=null)
-        {
+        if (categoryById != null) {
             // userId=0
 
-            creatArticle.insertArticle(article.getTitle(), article.getBrief(), article.getContent(),authId, categoryById.getId());
+            creatArticle.insertArticle(article.getTitle(), article.getBrief(), article.getContent(), authId, categoryById.getId());
 
-        }else System.out.println("category id not exist");
+        } else System.out.println("category id not exist");
     }
-   private Category inputCategoryField(Category category)
-   {
-       System.out.println("enter title category: ");
-       String titleCategory=input.next();
-       category.setTitle(titleCategory);
-       System.out.println("enter title description: ");
-       String description=input.next();
-       category.setDescription(description);
 
-       return category;
-   }
-    private Article inputArticleField(Article article)
-    {
+    private Category inputCategoryField(Category category) {
+        System.out.println("enter title category: ");
+        String titleCategory = input.next();
+        category.setTitle(titleCategory);
+        System.out.println("enter title description: ");
+        String description = input.next();
+        category.setDescription(description);
+
+        return category;
+    }
+
+    private Article inputArticleField(Article article) {
         System.out.println("enter articleTitle");
-        String articleTitle=input.next();
+        String articleTitle = input.next();
         article.setTitle(articleTitle);
 
         System.out.println("enter articleBrief");
-        String articleBrief=input.next();
-        article.setBrief( articleBrief);
+        String articleBrief = input.next();
+        article.setBrief(articleBrief);
 
         System.out.println("Enter articleContent");
-        String articleContent=input.next();
+        String articleContent = input.next();
         article.setContent(articleContent);
 
         return article;
     }
-    private CategoryManagerImplement showCategory() throws SQLException
-    {
+
+    private CategoryManagerImplement showCategory() throws SQLException {
         CategoryManagerImplement category = new CategoryManagerImplement();
-        List<Category> categories =category.getAllCategory();
-        for (int i = 0; i < categories.size(); i++)
-        {
+        List<Category> categories = category.getAllCategory();
+        for (int i = 0; i < categories.size(); i++) {
             System.out.println(categories.get(i));
         }
         return category;
     }
 
-    private void editSpecificArticle()
-    {
+    private void editSpecificArticle() {
         ArticleManagerImplement articleUpdate = new ArticleManagerImplement();
-      //  articleUpdate.update()
+        //  articleUpdate.update()
     }
 
     private void showUserLoginMenu() {
@@ -233,13 +247,13 @@ public class SystemArticle {
     }
 
     boolean cheek = false, cheekUserName = false, cheekNationalCode = false, cheekBirthday = false;
+
     // int id = 11;
     private User inputUserField() {
         User user = new User();
 
         do {
-            if (!cheekUserName)
-            {
+            if (!cheekUserName) {
                 System.out.println("please enter your username: ");
                 String username = input.next();
                 cheekUserName = cheekUserName(username);
@@ -248,8 +262,7 @@ public class SystemArticle {
                 else System.out.println("userName false");
             }
             ///////////////
-            if (!cheekNationalCode)
-            {
+            if (!cheekNationalCode) {
                 System.out.println("please enter your nationalCode: ");
                 int nationalCode = input.nextInt();
                 cheekNationalCode = cheekNationalCode(nationalCode);
@@ -266,22 +279,22 @@ public class SystemArticle {
                     user.setBirthday(birthday);
                 else System.out.println("birthday date  false");
             }
-            if (cheekBirthday  && cheekUserName && cheekNationalCode )
+            if (cheekBirthday && cheekUserName && cheekNationalCode)
                 cheek = true;
             else System.out.println("try again.............");
 
         } while (!cheek);
-   //     id++;
-   //     user.setId(id);
+        //     id++;
+        //     user.setId(id);
         return user;
     }
 
-    public void systemMenu()
-    {
+    public void systemMenu() {
         System.out.println("1) Login User ");
         System.out.println("2) Register ");
         System.out.println("3) Watch Article ");
         System.out.println("4) Login Admin");
+        System.out.println("5) Charge wallet");
     }
 
 

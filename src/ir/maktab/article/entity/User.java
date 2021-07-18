@@ -7,11 +7,12 @@ public class User {
     private int nationalCode;
     private int birthday;
     private boolean isActive=false;
+    private int wallet;
+
     public User() {
     }
 
-    public User(String username, int nationalCode,
-                int birthday, boolean isActive) {
+   public User(String username, int nationalCode, int birthday, boolean isActive) {
         this.username = username;
         this.nationalCode = nationalCode;
         this.birthday = birthday;
@@ -19,12 +20,13 @@ public class User {
     }
 
     public User(String username, String password, int nationalCode,
-                int birthday, boolean isActive) {
+                int birthday, boolean isActive,int wallet) {
         this.username = username;
         this.password = password;
         this.nationalCode = nationalCode;
         this.birthday = birthday;
         this.isActive = isActive;
+        this.wallet=wallet;
     }
 
     public User(int id, String username, String password,
@@ -35,6 +37,16 @@ public class User {
         this.nationalCode = nationalCode;
         this.birthday = birthday;
         this.isActive = isActive;
+    }
+
+
+
+    public int getWallet() {
+        return wallet;
+    }
+
+    public void setWallet(int wallet) {
+        this.wallet = wallet;
     }
 
     public int getId() {
@@ -94,6 +106,7 @@ public class User {
                 ", nationalCode=" + nationalCode +
                 ", birthday=" + birthday +
                 ", isActive=" + isActive +
+                ", wallet=" + wallet +
                 '}';
     }
 }

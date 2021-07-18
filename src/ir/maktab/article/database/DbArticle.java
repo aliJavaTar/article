@@ -44,6 +44,7 @@ public class DbArticle {
         return article;
     }
 
+
     public boolean updateArticle(int id, Article article) throws SQLException {
         openConnection();
         String query = "update articles set title=?,brief=?,content=?,is_published=?,publish_date=?,category_id=? where id=?";
@@ -137,8 +138,7 @@ public class DbArticle {
 
         ArrayList<Article> articles = new ArrayList<>();
 
-        while (resultSet.next())
-        {
+        while (resultSet.next()) {
             articles.add(new Article(
                     resultSet.getInt("id"),
                     resultSet.getString("title"),
@@ -154,4 +154,32 @@ public class DbArticle {
         closeConnection();
         return articles;
     }
+
+
+    public List<Article> findArticlesByUserid(int userId) throws SQLException {
+        openConnection();
+
+        String query = "select * from  articles where user_id=?";
+        statement = connection.prepareStatement(query);
+        statement.setInt(1, userId);
+        ResultSet resultSet = statement.executeQuery();
+        List<Article> arrayList = new ArrayList<>();
+        while (resultSet.next()) {
+            arrayList.add(new Article(
+                    resultSet.getInt("id"),
+                    resultSet.getString("title"),
+                    resultSet.getString("brief"),
+                    resultSet.getString("content"),
+                    resultSet.getString("create_date"),
+                    resultSet.getBoolean("is_published"),
+                    resultSet.getString("last_update"),
+                    resultSet.getString("publish_date"),
+                    resultSet.getInt("user_id"),
+                    resultSet.getInt("category_id")));
+        }
+        closeConnection();
+        return arrayList;
+    }
+
+
 }

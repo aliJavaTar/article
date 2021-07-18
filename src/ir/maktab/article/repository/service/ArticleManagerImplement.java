@@ -5,7 +5,7 @@ import ir.maktab.article.entity.Article;
 import ir.maktab.article.repository.base.ArticleManage;
 
 import java.sql.SQLException;
-import java.util.Date;
+
 import java.util.List;
 
 public class ArticleManagerImplement implements ArticleManage
@@ -16,10 +16,8 @@ public class ArticleManagerImplement implements ArticleManage
         dbArticle = new DbArticle();
     }
     @Override
-    public boolean insertArticle(String title, String brief, String content,
-                                   int userId, int categoryId) throws SQLException
+    public boolean insertArticle(String title, String brief, String content, int userId, int categoryId) throws SQLException
     {
-
       return   dbArticle.insertArticle(new Article( title, brief, content, userId, categoryId));
     }
 
@@ -49,5 +47,10 @@ public class ArticleManagerImplement implements ArticleManage
                           int categoryIde) throws SQLException
     {
         return dbArticle.updateArticle(id,new Article( title,  brief,  content,  isPublished,  publishDate,  categoryIde));
+    }
+
+    @Override
+    public List<Article> getArticlesByUserId(int userId) throws SQLException {
+        return dbArticle.findArticlesByUserid(userId);
     }
 }

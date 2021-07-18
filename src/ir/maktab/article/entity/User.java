@@ -10,7 +10,16 @@ public class User {
     public User() {
     }
 
-    public User(String username, String password, int nationalCode, int birthday, boolean isActive) {
+    public User(String username, int nationalCode,
+                int birthday, boolean isActive) {
+        this.username = username;
+        this.nationalCode = nationalCode;
+        this.birthday = birthday;
+        this.isActive = isActive;
+    }
+
+    public User(String username, String password, int nationalCode,
+                int birthday, boolean isActive) {
         this.username = username;
         this.password = password;
         this.nationalCode = nationalCode;
@@ -18,7 +27,8 @@ public class User {
         this.isActive = isActive;
     }
 
-    public User(int id, String username, String password, int nationalCode, int birthday, boolean isActive) {
+    public User(int id, String username, String password,
+                int nationalCode, int birthday, boolean isActive) {
         this.id = id;
         this.username = username;
         this.password = password;

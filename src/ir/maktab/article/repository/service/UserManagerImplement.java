@@ -14,12 +14,15 @@ public class UserManagerImplement implements UserManage {
         database=new DbUser();
     }
     @Override
-    public boolean insertUser(String username, String password, int nationalCode, int birthday,boolean isActive) throws SQLException {
-      return   database.insertUser(new User(username,password,nationalCode,birthday,isActive));
+    public boolean insertUser(String username, int nationalCode, int birthday, boolean isActive) throws SQLException
+    {
+      return   database.insertUser(new User(username,nationalCode,birthday,isActive));
 
     }
 
-
+   public User getUserByUserName(String username) throws SQLException {
+       return database.findUserByUsername(username);
+   }
 
     @Override
     public List<User> getAllUser() throws SQLException {

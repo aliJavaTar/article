@@ -14,8 +14,7 @@ import java.util.ArrayList;
 
 public class Main {
     public static void main(String[] args) throws SQLException {
-        SystemArticle system =new SystemArticle();
-        system.systemMenu();
+        SystemArticle system = new SystemArticle();
         system.startMenu();
     }
 }

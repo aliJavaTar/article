@@ -21,4 +21,7 @@ public interface ArticleManage {
 
     boolean update(int id, String title, String brief, String content,
                    boolean isPublished, String publishDate, int categoryIde) throws SQLException;
+
+    List<Article> getArticlesByUserId(int userId) throws SQLException;
+
 }

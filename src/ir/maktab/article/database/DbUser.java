@@ -95,7 +95,7 @@ public class DbUser {
         String query = "insert into users(userName,password,national_code,birthday) values (?,?,?,?)";
         statement = connection.prepareStatement(query);
         statement.setString(1, user.getUsername());
-        statement.setString(2, user.getPassword());
+        statement.setString(2, String.valueOf(user.getNationalCode()));
         statement.setInt(3, user.getNationalCode());
         statement.setInt(4, user.getBirthday());
 
@@ -130,5 +130,29 @@ public class DbUser {
         }
         closeConnection();
         return users;
+    }
+
+    public User findUserByUsername(String username) throws SQLException
+    {
+
+        openConnection();
+        User user = new User();
+        String query = "select * from users where username=?";
+        statement = connection.prepareStatement(query);
+        statement.setString(1, username);
+        ResultSet resultSet = statement.executeQuery();
+
+        while (resultSet.next())
+        {
+
+            user.setId(resultSet.getInt("id"));
+            user.setUsername(resultSet.getString("username"));
+            user.setPassword(resultSet.getString("password"));
+            user.setNationalCode(resultSet.getInt("national_code"));
+            user.setBirthday(resultSet.getInt("birthday"));
+            user.setActive(resultSet.getBoolean("is_active"));
+        }
+        closeConnection();
+        return user;
     }
 }

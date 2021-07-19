@@ -83,9 +83,17 @@ public class DbUser {
         ResultSet resultSet = statement.executeQuery();
         ArrayList<User> users = new ArrayList<>();
         while (resultSet.next()) {
-            users.add(new User(resultSet.getInt("id"), resultSet.getString("userName"),
-                    resultSet.getString("password"), resultSet.getInt("national_code"),
-                    resultSet.getInt("birthday"), resultSet.getBoolean("is_active")));
+            users.add(
+                    new User(
+                    resultSet.getInt("id"),
+                    resultSet.getString("userName"),
+                    resultSet.getString("password"),
+                    resultSet.getInt("national_code"),
+                    resultSet.getInt("birthday"),
+                    resultSet.getBoolean("is_active"),
+                    resultSet.getInt("wallet")
+                    )
+            );
         }
         closeConnection();
         return users;
@@ -93,14 +101,18 @@ public class DbUser {
 
     public boolean insertUser(User user) throws SQLException {
         openConnection();
-        String query = "insert into users(userName,password,national_code,birthday) values (?,?,?,?)";
+        String query = "insert into users(userName,password,national_code,birthday) select ?,?,?,?" +
+                " WHERE NOT EXISTS (SELECT username  FROM users WHERE username = ? or national_code = ?)";
         statement = connection.prepareStatement(query);
         statement.setString(1, user.getUsername());
         statement.setString(2, String.valueOf(user.getNationalCode()));
         statement.setInt(3, user.getNationalCode());
         statement.setInt(4, user.getBirthday());
+        statement.setString(5, user.getUsername());
+        statement.setInt(6, user.getNationalCode());
 
-        if (statement.executeUpdate() > 0) {
+        if (statement.executeUpdate() > 0)
+        {
             System.out.println("insert done ");
             closeConnection();
             return true;
@@ -125,9 +137,14 @@ public class DbUser {
         ArrayList<User> users = new ArrayList<>();
 
         while (resultSet.next()) {
-            users.add(new User(resultSet.getInt("id"), resultSet.getString("userName"),
-                    resultSet.getString("password"), resultSet.getInt("national_code"),
-                    resultSet.getInt("birthday"), resultSet.getBoolean("is_active")));
+            users.add(new User(resultSet.getInt("id"),
+                    resultSet.getString("userName"),
+                    resultSet.getString("password"),
+                    resultSet.getInt("national_code"),
+                    resultSet.getInt("birthday"),
+                    resultSet.getBoolean("is_active"),
+                    resultSet.getInt("wallet")
+            ));
         }
         closeConnection();
         return users;
@@ -156,5 +173,16 @@ public class DbUser {
         }
         closeConnection();
         return user;
+    }
+    public boolean updatePassword(int id,String password) throws SQLException {
+        openConnection();
+        String sqlQuery="update users set password=? where id=?";
+        statement=connection.prepareStatement(sqlQuery);
+        statement.setString(1,password);
+        statement.setInt(2,id);
+        if ( statement.executeUpdate()>0)
+            return true;
+        else return false;
+
     }
 }

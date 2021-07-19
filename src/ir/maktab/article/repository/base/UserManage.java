@@ -21,5 +21,6 @@ public interface UserManage {
 
     boolean update(int id,String username, String password, int nationalCode, int birthday,boolean isActive,int wallet) throws SQLException;
 
+    boolean update(int id , String password) throws SQLException;
 
 }

@@ -88,18 +88,18 @@ public class SystemArticle {
     }
 
     //////////////////////////////////////////////////////////////////////////////
+    String condition = "";
 
     private void showArticle() throws SQLException {
         ArticleManagerImplement articles = new ArticleManagerImplement();
         List<Article> articleList = articles.getAllArticle();
         Article article;
         System.out.println("what kind of article do you want? \n 1) MonetaryArticles \n 2) FreeArticles");
-        int select=input.nextInt();
-        if (select==1)
-        {
-            showMonetaryArticles( articleList);
-        }else if (select==2)
-        showFreeArticles(articleList);
+        int select = input.nextInt();
+        if (select == 1) {
+            showMonetaryArticles(articleList);
+        } else if (select == 2)
+            showFreeArticles(articleList);
         else System.out.println("number false ....");
 
         System.out.println("---------------------------------------------------------");
@@ -107,7 +107,9 @@ public class SystemArticle {
         System.out.println("which one do you like to see complete ?");
         System.out.print("enter id: ");
         int id = input.nextInt();
-        article = articles.getArticleById(id);
+
+
+        article = articles.getArticleById(id, condition);
 
         if (article.getId() != 0)
             System.out.println(article.toString());
@@ -115,12 +117,10 @@ public class SystemArticle {
             System.out.println("not found");
     }
 
-    private void showMonetaryArticles( List<Article> articleList)
-    {
-        for (int i = 0; i < articleList.size(); i++)
-        {
-            if (articleList.get(i).getPrice() > 0)
-            {
+    private void showMonetaryArticles(List<Article> articleList) {
+        condition = "money";
+        for (int i = 0; i < articleList.size(); i++) {
+            if (articleList.get(i).getPrice() > 0) {
                 System.out.println("id: " + articleList.get(i).getId() + " title : "
                         + articleList.get(i).getTitle() + " Brief: " +
                         articleList.get(i).getBrief() + " price: " + articleList.get(i).getPrice());
@@ -128,8 +128,8 @@ public class SystemArticle {
         }
     }
 
-    private void showFreeArticles( List<Article> articleList)  {
-
+    private void showFreeArticles(List<Article> articleList) {
+        condition = "free";
         for (int i = 0; i < articleList.size(); i++) {
             if (articleList.get(i).getPrice() == 0) {
                 System.out.println("id: " + articleList.get(i).getId() + " title : "
@@ -144,8 +144,10 @@ public class SystemArticle {
         UserManagerImplement userRegister = new UserManagerImplement();
         System.out.println("register page...");
         User user = inputUserField();
-        userRegister.insertUser(user.getUsername(), user.getNationalCode(), user.getBirthday(), user.getIsActive());
+        boolean done = userRegister.insertUser(user.getUsername(), user.getNationalCode(), user.getBirthday(), user.getIsActive());
+        if (done)
         System.out.println("register successful \n your password is your NationalCode \n waiting for authentication.......");
+        else System.out.println("userName or national_code is duplicate");
 
         startMenu();
     }
@@ -190,13 +192,38 @@ public class SystemArticle {
                 createNewArticle();
                 break;
             case 4:
-                //edit password or edit all property
+                 changePassword();
                 System.out.println();
                 break;
             default:
                 userLoginMenu(user);
                 break;
         }
+    }
+
+    private void changePassword() throws SQLException {
+        UserManagerImplement update = new UserManagerImplement();
+        User user ;
+        System.out.println("enter your last password: ");
+        String lastPassword=input.next();
+         user =update.getUserById(authId);
+         if (lastPassword.equals(user.getPassword()))
+         {
+             System.out.println("enter your new password \n your password need (number,lowerCase,UpperCase,character like(#@...)");
+             String password=input.next();
+             if (cheekPassword(password))
+             {
+                 user.setPassword(password);
+                 update.update(authId, password);
+                 System.out.println("password changed");
+                 System.out.println("-----_____-------_______------______");
+                 System.out.println();
+                 startMenu();
+             }else {
+                 System.out.println("your password need (number,lowerCase,UpperCase,character like(#@...) ");
+                 changePassword();
+             }
+         }else System.out.println("last password false");
     }
 
 
@@ -294,7 +321,7 @@ public class SystemArticle {
         System.out.println("1) Watch your article");
         System.out.println("2) Edit your article");
         System.out.println("3) Create new article");
-        System.out.println("4) Do you want change you password ?");
+        System.out.println("4) Change your password");
     }
 
     boolean cheek = false, cheekUserName = false, cheekNationalCode = false, cheekBirthday = false;
@@ -356,19 +383,22 @@ public class SystemArticle {
         return isTrue;
     }
 
-    private boolean cheekNationalCode(int nationalCode) {
+    private boolean cheekNationalCode(int nationalCode)
+    {
         if (nationalCode > 99)
             return true;
         else return false;
     }
 
-    private boolean cheekBirthdayDate(int birthday) {
+    private boolean cheekBirthdayDate(int birthday)
+    {
         if (birthday > 1920 || birthday < 2022)
             return true;
         else return false;
     }
 
-    private boolean cheekUserName(String text) {
+    private boolean cheekUserName(String text)
+    {
         String regex = "^[a-zA-Z]([._-](?![._-])|[a-zA-Z0-9]){3,16}[a-zA-Z0-9]$";
         boolean isTrue = Pattern.matches(regex, text);
         return isTrue;

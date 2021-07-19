@@ -30,13 +30,14 @@ public class User {
     }
 
     public User(int id, String username, String password,
-                int nationalCode, int birthday, boolean isActive) {
+                int nationalCode, int birthday, boolean isActive,int wallet) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.nationalCode = nationalCode;
         this.birthday = birthday;
         this.isActive = isActive;
+        this.wallet=wallet;
     }
 
 

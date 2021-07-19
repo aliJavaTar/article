@@ -21,11 +21,21 @@ public class DbArticle {
         connection.close();
     }
 
-    public Article findArticleById(int id) throws SQLException
+    public Article findArticleById(int id,String condition) throws SQLException
     {
+        switch (condition)
+        {
+            case "free" : condition = " and price = 0";
+                break;
+            case "money": condition = " and price != 0";
+                break;
+            default: condition = "";
+        }
+
         openConnection();
         Article article = new Article();
-        String query = "select * from articles where id=? and where price = 0";
+        String query = "select * from articles where id=?";
+        query += condition;
         statement = connection.prepareStatement(query);
         statement.setInt(1, id);
         ResultSet resultSet = statement.executeQuery();

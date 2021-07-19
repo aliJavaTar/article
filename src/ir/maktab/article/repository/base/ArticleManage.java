@@ -15,7 +15,7 @@ public interface ArticleManage {
 
     List<Article> getAllArticle(int count, int step) throws SQLException;
 
-    Article getArticleById(int id) throws SQLException;
+    Article getArticleById(int id,String condition) throws SQLException;
 
     boolean removeArticle(int id) throws SQLException;
 

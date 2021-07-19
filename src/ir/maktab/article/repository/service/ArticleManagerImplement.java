@@ -32,8 +32,8 @@ public class ArticleManagerImplement implements ArticleManage
     }
 
     @Override
-    public Article getArticleById(int id) throws SQLException {
-       return dbArticle.findArticleById(id);
+    public Article getArticleById(int id,String condition) throws SQLException {
+       return dbArticle.findArticleById(id,condition);
     }
 
     @Override

@@ -9,7 +9,7 @@ import java.util.List;
 public interface ArticleManage {
 
     boolean insertArticle(String title, String brief, String content
-            , int userId, int categoryId) throws SQLException;
+            , int userId, int categoryId,int price) throws SQLException;
 
     List<Article> getAllArticle() throws SQLException;
 
@@ -20,7 +20,7 @@ public interface ArticleManage {
     boolean removeArticle(int id) throws SQLException;
 
     boolean update(int id, String title, String brief, String content,
-                   boolean isPublished, String publishDate, int categoryIde) throws SQLException;
+                   boolean isPublished, String publishDate, int categoryIde,int price) throws SQLException;
 
     List<Article> getArticlesByUserId(int userId) throws SQLException;
 

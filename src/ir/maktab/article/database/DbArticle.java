@@ -21,10 +21,11 @@ public class DbArticle {
         connection.close();
     }
 
-    public Article findArticleById(int id) throws SQLException {
+    public Article findArticleById(int id) throws SQLException
+    {
         openConnection();
         Article article = new Article();
-        String query = "select * from articles where id=?";
+        String query = "select * from articles where id=? and where price = 0";
         statement = connection.prepareStatement(query);
         statement.setInt(1, id);
         ResultSet resultSet = statement.executeQuery();
@@ -39,15 +40,15 @@ public class DbArticle {
             article.setLastUpdate(resultSet.getString("last_update"));
             article.setUserId(resultSet.getInt("user_id"));
             article.setCategoryId(resultSet.getInt("category_id"));
+            article.setPrice(resultSet.getInt("price"));
         }
         closeConnection();
         return article;
     }
 
-
     public boolean updateArticle(int id, Article article) throws SQLException {
         openConnection();
-        String query = "update articles set title=?,brief=?,content=?,is_published=?,publish_date=?,category_id=? where id=?";
+        String query = "update articles set title=?,brief=?,content=?,is_published=?,publish_date=?,category_id=?,price=? where id=?";
         statement = connection.prepareStatement(query);
 
         statement.setString(1, article.getTitle());
@@ -57,6 +58,7 @@ public class DbArticle {
         statement.setString(5, article.getPublishDate());
         statement.setInt(6, article.getCategoryId());
         statement.setInt(7, id);
+        statement.setInt(8,article.getPrice());
 
         if (statement.executeUpdate() > 0) {
             System.out.println("update done");
@@ -98,22 +100,23 @@ public class DbArticle {
                     resultSet.getString("last_update"),
                     resultSet.getString("publish_date"),
                     resultSet.getInt("user_id"),
-                    resultSet.getInt("category_id")));
+                    resultSet.getInt("category_id"),
+                    resultSet.getInt("price")));
         }
         closeConnection();
         return arrayList;
     }
 
-
     public boolean insertArticle(Article article) throws SQLException {
         openConnection();
-        String query = "insert into articles(title,brief,content,user_id,category_id) values (?,?,?,?,?)";
+        String query = "insert into articles(title,brief,content,user_id,category_id,price) values (?,?,?,?,?,?)";
         statement = connection.prepareStatement(query);
         statement.setString(1, article.getTitle());
         statement.setString(2, article.getBrief());
         statement.setString(3, article.getContent());
         statement.setInt(4, article.getUserId());
         statement.setInt(5, article.getCategoryId());
+        statement.setInt(6,article.getPrice());
 
         if (statement.executeUpdate() > 0) {
             System.out.println("insert done ");
@@ -149,12 +152,13 @@ public class DbArticle {
                     resultSet.getString("lastUpdate"),
                     resultSet.getString("publishDate"),
                     resultSet.getInt("user_id"),
-                    resultSet.getInt("category_id")));
+                    resultSet.getInt("category_id"),
+                    resultSet.getInt("price")));
+
         }
         closeConnection();
         return articles;
     }
-
 
     public List<Article> findArticlesByUserid(int userId) throws SQLException {
         openConnection();
@@ -175,7 +179,8 @@ public class DbArticle {
                     resultSet.getString("last_update"),
                     resultSet.getString("publish_date"),
                     resultSet.getInt("user_id"),
-                    resultSet.getInt("category_id")));
+                    resultSet.getInt("category_id"),
+                    resultSet.getInt("price")));
         }
         closeConnection();
         return arrayList;

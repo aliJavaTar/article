@@ -11,6 +11,7 @@ public class Article {
     private String publishDate;
     private int userId;
     private int categoryId;
+    private int price;
 
     public boolean getIsPublished() {
         return isPublished;
@@ -20,25 +21,29 @@ public class Article {
     }
 
 
-    public Article(String title, String brief, String content, boolean isPublished, String publishDate, int categoryId) {
+    public Article(String title, String brief, String content,
+                   boolean isPublished, String publishDate, int categoryId,int price) {
         this.title = title;
         this.brief = brief;
         this.content = content;
         this.isPublished = isPublished;
         this.publishDate = publishDate;
         this.categoryId = categoryId;
+        this.price=price;
     }
 
-    public Article(String title, String brief, String content, int userId, int categoryId) {
+    public Article(String title, String brief, String content, int userId, int categoryId,int price)
+    {
         this.title = title;
         this.brief = brief;
         this.content = content;
         this.userId = userId;
         this.categoryId = categoryId;
+        this.price=price;
     }
 
-    public Article(int id, String title, String brief, String content, String createDate, boolean isPublished, String lastUpdate,
-                   String publishDate, int userId, int categoryId) {
+    public Article(int id, String title, String brief, String content, String createDate,
+                   boolean isPublished, String lastUpdate, String publishDate, int userId, int categoryId,int price) {
         this.id = id;
         this.title = title;
         this.brief = brief;
@@ -49,6 +54,7 @@ public class Article {
         this.publishDate = publishDate;
         this.userId = userId;
         this.categoryId = categoryId;
+        this.price=price;
     }
 
     public int getUserId() {
@@ -67,7 +73,13 @@ public class Article {
         this.categoryId = categoryId;
     }
 
+    public int getPrice() {
+        return price;
+    }
 
+    public void setPrice(int price) {
+        this.price = price;
+    }
 
     public int getId() {
         return id;
@@ -144,6 +156,7 @@ public class Article {
                 ", publishDate='" + publishDate + '\'' +
                 ", userId=" + userId +
                 ", categoryId=" + categoryId +
+                ", price=" + price +
                 '}';
     }
 }

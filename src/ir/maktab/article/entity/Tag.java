@@ -31,4 +31,12 @@ public class Tag {
     public void setTitle(String title) {
         this.title = title;
     }
+
+    @Override
+    public String toString() {
+        return "Tag{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                '}';
+    }
 }

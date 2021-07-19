@@ -40,7 +40,7 @@ public class DbTag {
 
     public boolean updateTag(int id, Tag tag) throws SQLException {
         openConnection();
-        String query = "update categoryes set title=? where id=?";
+        String query = "update tags set title=? where id=?";
         statement = connection.prepareStatement(query);
         statement.setString(1, tag.getTitle());
         statement.setInt(2, id);
@@ -74,7 +74,9 @@ public class DbTag {
         ResultSet resultSet = statement.executeQuery();
         ArrayList<Tag> tags = new ArrayList<>();
         while (resultSet.next()) {
-            tags.add(new Tag(resultSet.getString("title")));
+            tags.add(new Tag(resultSet.getInt("id"),
+                    (resultSet.getString("title"))
+            ));
         }
         closeConnection();
         return tags;
@@ -82,7 +84,7 @@ public class DbTag {
 
     public boolean insertTag(Tag tag) throws SQLException {
         openConnection();
-        String query = "insert into categoryes(title) values (?)";
+        String query = "insert into tags(title) values (?)";
         statement = connection.prepareStatement(query);
 
         statement.setString(1, tag.getTitle());
@@ -99,7 +101,7 @@ public class DbTag {
 
     }
 
-    public List<Tag> findAllUser(int limit, int step) throws SQLException {
+    public List<Tag> findAllTag(int limit, int step) throws SQLException {
         openConnection();
         int offset = (step - 1) * limit;
         String query = "select * from order  by id tags limit?,?";

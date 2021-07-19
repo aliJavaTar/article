@@ -1,16 +1,15 @@
 package ir.maktab.article;
 
-import com.mysql.cj.jdbc.ConnectionImpl;
 import ir.maktab.article.entity.Article;
 import ir.maktab.article.entity.Category;
+import ir.maktab.article.entity.Tag;
 import ir.maktab.article.entity.User;
 import ir.maktab.article.repository.Admin;
 import ir.maktab.article.repository.service.ArticleManagerImplement;
 import ir.maktab.article.repository.service.CategoryManagerImplement;
+import ir.maktab.article.repository.service.TagManagerImplement;
 import ir.maktab.article.repository.service.UserManagerImplement;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -146,7 +145,7 @@ public class SystemArticle {
         User user = inputUserField();
         boolean done = userRegister.insertUser(user.getUsername(), user.getNationalCode(), user.getBirthday(), user.getIsActive());
         if (done)
-        System.out.println("register successful \n your password is your NationalCode \n waiting for authentication.......");
+            System.out.println("register successful \n your password is your NationalCode \n waiting for authentication.......");
         else System.out.println("userName or national_code is duplicate");
 
         startMenu();
@@ -192,7 +191,7 @@ public class SystemArticle {
                 createNewArticle();
                 break;
             case 4:
-                 changePassword();
+                changePassword();
                 System.out.println();
                 break;
             default:
@@ -203,27 +202,25 @@ public class SystemArticle {
 
     private void changePassword() throws SQLException {
         UserManagerImplement update = new UserManagerImplement();
-        User user ;
+        User user;
         System.out.println("enter your last password: ");
-        String lastPassword=input.next();
-         user =update.getUserById(authId);
-         if (lastPassword.equals(user.getPassword()))
-         {
-             System.out.println("enter your new password \n your password need (number,lowerCase,UpperCase,character like(#@...)");
-             String password=input.next();
-             if (cheekPassword(password))
-             {
-                 user.setPassword(password);
-                 update.update(authId, password);
-                 System.out.println("password changed");
-                 System.out.println("-----_____-------_______------______");
-                 System.out.println();
-                 startMenu();
-             }else {
-                 System.out.println("your password need (number,lowerCase,UpperCase,character like(#@...) ");
-                 changePassword();
-             }
-         }else System.out.println("last password false");
+        String lastPassword = input.next();
+        user = update.getUserById(authId);
+        if (lastPassword.equals(user.getPassword())) {
+            System.out.println("enter your new password \n your password need (number,lowerCase,UpperCase,character like(#@...)");
+            String password = input.next();
+            if (cheekPassword(password)) {
+                user.setPassword(password);
+                update.update(authId, password);
+                System.out.println("password changed");
+                System.out.println("-----_____-------_______------______");
+                System.out.println();
+                startMenu();
+            } else {
+                System.out.println("your password need (number,lowerCase,UpperCase,character like(#@...) ");
+                changePassword();
+            }
+        } else System.out.println("last password false");
     }
 
 
@@ -236,10 +233,10 @@ public class SystemArticle {
 
     }
 
-
     private void createNewArticle() throws SQLException {
         Article article = new Article();
         Category category = new Category();
+        Tag tag = new Tag();
         ArticleManagerImplement createArticle = new ArticleManagerImplement();
         //  showCategory
         CategoryManagerImplement createCategory = showCategory();
@@ -251,9 +248,52 @@ public class SystemArticle {
             showCategory();
             createArticle(createCategory, article, createArticle, authId);
 
+            addTag();
         } else if (answer.equals("no")) {
             createArticle(createCategory, article, createArticle, authId);
+            addTag();
         }
+    }
+    //////////////////////////////////
+    boolean flag=true;
+    private void addTag() throws SQLException {
+        Tag tag = new Tag();
+        TagManagerImplement tagManage = new TagManagerImplement();
+        String answer;
+        showTag();
+        do {
+            System.out.println("Do you want new TAG? (yes or no)");
+            answer = input.next();
+            if (answer.equals("yes"))
+            {
+                tag = inputTagField(tag);
+                tagManage.insertTag(tag.getTitle());
+                showTag();
+                addTag();
+            } else if (answer.equals("no"))
+                flag=false;
+
+        } while (flag);
+    }
+
+
+    //////////////////////////////
+
+    private List<Tag> showTag() throws SQLException {
+        TagManagerImplement tag = new TagManagerImplement();
+        List<Tag> tags = tag.getAllTag();
+        for (int i = 0; i < tags.size(); i++) {
+            System.out.println(tags.get(i));
+        }
+        return tags;
+    }
+
+    private Tag inputTagField(Tag tag) {
+        System.out.println("enter title Tag: ");
+        String titleTag = input.next();
+        tag.setTitle(titleTag);
+
+        return tag;
     }
 
     private void createArticle(CategoryManagerImplement createCategory,
@@ -292,7 +332,7 @@ public class SystemArticle {
         article.setBrief(articleBrief);
 
         System.out.println("Enter articleContent ");
-        String articleContent = input.nextLine();
+        String articleContent = input.next();
         article.setContent(articleContent);
 
         System.out.println("Enter price ( 0 for free )");
@@ -383,22 +423,19 @@ public class SystemArticle {
         return isTrue;
     }
 
-    private boolean cheekNationalCode(int nationalCode)
-    {
+    private boolean cheekNationalCode(int nationalCode) {
         if (nationalCode > 99)
             return true;
         else return false;
     }
 
-    private boolean cheekBirthdayDate(int birthday)
-    {
+    private boolean cheekBirthdayDate(int birthday) {
         if (birthday > 1920 || birthday < 2022)
             return true;
         else return false;
     }
 
-    private boolean cheekUserName(String text)
-    {
+    private boolean cheekUserName(String text) {
         String regex = "^[a-zA-Z]([._-](?![._-])|[a-zA-Z0-9]){3,16}[a-zA-Z0-9]$";
         boolean isTrue = Pattern.matches(regex, text);
         return isTrue;

@@ -6,6 +6,7 @@ import ir.maktab.article.repository.base.ArticleManage;
 
 import java.sql.SQLException;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 public class ArticleManagerImplement implements ArticleManage
@@ -43,10 +44,10 @@ public class ArticleManagerImplement implements ArticleManage
 
     @Override
     public boolean update(int id ,String title, String brief, String content,
-                          boolean isPublished, String publishDate,
-                          int categoryIde,int price) throws SQLException
+                          boolean isPublished, Timestamp publishDate,
+                          int categoryIde,int price,int userId) throws SQLException
     {
-        return dbArticle.updateArticle(id,new Article( title,  brief,  content,  isPublished,  publishDate,  categoryIde,price));
+        return dbArticle.updateArticle(id,new Article( title,  brief,  content,  isPublished,  publishDate,  categoryIde,price,userId));
     }
 
     @Override

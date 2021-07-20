@@ -1,5 +1,7 @@
 package ir.maktab.article.entity;
 
+import java.sql.Timestamp;
+
 public class Article {
     private  int id;
     private  String title;
@@ -8,10 +10,25 @@ public class Article {
     private String createDate;
     private boolean isPublished;
     private String lastUpdate;
-    private String publishDate;
+    private Timestamp publishDate;
     private int userId;
     private int categoryId;
     private int price;
+
+    public Article(String title,
+                   String brief, String content, boolean isPublished,
+                   Timestamp publishDate, int categoryId, int price, int userId)
+    {
+        this.title = title;
+        this.brief = brief;
+        this.content = content;
+        this.isPublished = isPublished;
+        this.publishDate = publishDate;
+        this.categoryId = categoryId;
+        this.price=price;
+        this.userId=userId;
+
+    }
 
     public boolean getIsPublished() {
         return isPublished;
@@ -22,7 +39,7 @@ public class Article {
 
 
     public Article(String title, String brief, String content,
-                   boolean isPublished, String publishDate, int categoryId,int price) {
+                   boolean isPublished, Timestamp publishDate, int categoryId,int price) {
         this.title = title;
         this.brief = brief;
         this.content = content;
@@ -43,7 +60,7 @@ public class Article {
     }
 
     public Article(int id, String title, String brief, String content, String createDate,
-                   boolean isPublished, String lastUpdate, String publishDate, int userId, int categoryId,int price) {
+                   boolean isPublished, String lastUpdate, Timestamp publishDate, int userId, int categoryId,int price) {
         this.id = id;
         this.title = title;
         this.brief = brief;
@@ -135,11 +152,11 @@ public class Article {
         this.lastUpdate = lastUpdate;
     }
 
-    public String getPublishDate() {
+    public Timestamp getPublishDate() {
         return publishDate;
     }
 
-    public void setPublishDate(String publishDate) {
+    public void setPublishDate(Timestamp publishDate) {
         this.publishDate = publishDate;
     }
 

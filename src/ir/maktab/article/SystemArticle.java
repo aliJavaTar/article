@@ -1,18 +1,15 @@
 package ir.maktab.article;
 
-import ir.maktab.article.entity.Article;
-import ir.maktab.article.entity.Category;
-import ir.maktab.article.entity.Tag;
-import ir.maktab.article.entity.User;
+import ir.maktab.article.entity.*;
 import ir.maktab.article.repository.Admin;
 import ir.maktab.article.repository.service.*;
 
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class SystemArticle {
@@ -88,15 +85,13 @@ public class SystemArticle {
     //////////////////////////////////////////////////////////////////////////////
     String condition = "";
 
-    private void showArticle() throws SQLException
-    {
+    private void showArticle() throws SQLException {
         ArticleManagerImplement articles = new ArticleManagerImplement();
         List<Article> articleList = articles.getAllArticle();
         Article article;
         System.out.println("what kind of article do you want? \n 1) MonetaryArticles \n 2) FreeArticles");
         int select = input.nextInt();
-        if (select == 1)
-        {
+        if (select == 1) {
             showMonetaryArticles(articleList);
         } else if (select == 2)
             showFreeArticles(articleList);
@@ -119,28 +114,25 @@ public class SystemArticle {
     private void showMonetaryArticles(List<Article> articleList) throws SQLException {
         ArticleTagMangerImplement tags = new ArticleTagMangerImplement();
         condition = "money";
-        for (int i = 0; i < articleList.size(); i++)
-        {
-            if (articleList.get(i).getPrice() > 0)
-            {
+        for (int i = 0; i < articleList.size(); i++) {
+            if (articleList.get(i).getPrice() > 0) {
                 System.out.println("id: " + articleList.get(i).getId() + " title : "
                         + articleList.get(i).getTitle() + " Brief: " +
                         articleList.get(i).getBrief() + " price: " + articleList.get(i).getPrice());
-                       System.out.println("Tags : "+tags.findArticleTag(articleList.get(i).getId()));
+                System.out.println("Tags : " + tags.findArticleTag(articleList.get(i).getId()));
             }
         }
     }
 
     private void showFreeArticles(List<Article> articleList) throws SQLException {
         condition = "free";
-        for (int i = 0; i < articleList.size(); i++)
-        {ArticleTagMangerImplement tags = new ArticleTagMangerImplement();
-            if (articleList.get(i).getPrice() == 0)
-            {
+        for (int i = 0; i < articleList.size(); i++) {
+            ArticleTagMangerImplement tags = new ArticleTagMangerImplement();
+            if (articleList.get(i).getPrice() == 0) {
                 System.out.println("id: " + articleList.get(i).getId() + " title : "
                         + articleList.get(i).getTitle() + " Brief: " +
                         articleList.get(i).getBrief() + " price: " + articleList.get(i).getPrice());
-                System.out.println("Tags : "+tags.findArticleTag(articleList.get(i).getId()));
+                System.out.println("Tags : " + tags.findArticleTag(articleList.get(i).getId()));
             }
         }
     }
@@ -169,6 +161,7 @@ public class SystemArticle {
         String password = input.next();
         user = userDb.getUserByUserName(username);
         authId = user.getId();
+        System.out.println("1 "+authId);
         if (user.getId() == 0) {
             System.out.println("user not exist");
             System.exit(0);
@@ -213,12 +206,16 @@ public class SystemArticle {
         System.out.println("enter your last password: ");
         String lastPassword = input.next();
         user = update.getUserById(authId);
+        System.out.println("2 "+authId);
+
         if (lastPassword.equals(user.getPassword())) {
             System.out.println("enter your new password \n your password need (number,lowerCase,UpperCase,character like(#@...)");
             String password = input.next();
             if (cheekPassword(password)) {
                 user.setPassword(password);
                 update.update(authId, password);
+                System.out.println("3 "+authId);
+
                 System.out.println("password changed");
                 System.out.println("-----_____-------_______------______");
                 System.out.println();
@@ -234,6 +231,8 @@ public class SystemArticle {
     private void showSpecificArticle() throws SQLException {
         ArticleManagerImplement article = new ArticleManagerImplement();
         ArrayList<Article> articles = (ArrayList<Article>) article.getArticlesByUserId(authId);
+        System.out.println("4 "+authId);
+
         for (int i = 0; i < articles.size(); i++) {
             System.out.println(articles.get(i));
         }
@@ -254,9 +253,13 @@ public class SystemArticle {
             createCategory.insertCategory(category.getTitle(), category.getDescription());
             showCategory();
             createArticle(createCategory, article, createArticle, authId);
+            System.out.println("5 "+authId);
+
             addTag();
         } else if (answer.equals("no")) {
             createArticle(createCategory, article, createArticle, authId);
+            System.out.println("6 "+authId);
+
             addTag();
         }
     }
@@ -331,10 +334,11 @@ public class SystemArticle {
         return tag;
     }
 
-    int idArticle;
 
     private void createArticle(CategoryManagerImplement createCategory, Article article,
                                ArticleManagerImplement creatArticle, int authId) throws SQLException {
+        System.out.println("7 "+authId);
+
         System.out.println("Which one category do you want [ Enter Id Category ] ?");
         int categoryId = input.nextInt();
         Category categoryById = createCategory.getCategoryById(categoryId);
@@ -345,6 +349,7 @@ public class SystemArticle {
                     (article.getTitle(), article.getBrief(), article.getContent(), authId,
                             categoryById.getId(), article.getPrice());
 
+            System.out.println("8 "+authId);
 
         } else System.out.println("category id not exist");
     }
@@ -390,11 +395,48 @@ public class SystemArticle {
         return category;
     }
 
-    private void editSpecificArticle() throws SQLException {
+    int idArticle;
+
+    private void editSpecificArticle() throws SQLException
+    {
         ArticleManagerImplement articleUpdate = new ArticleManagerImplement();
-        articleUpdate.getAllArticle();
-//        articleUpdate.update()
-        //  articleUpdate.update()
+        ArticleTagMangerImplement articleTag = new ArticleTagMangerImplement();
+        Article article = new Article();
+        List<Article> articles = articleUpdate.getArticlesByUserId(authId);
+        System.out.println("9 "+authId);
+
+        for (int i = 0; i < articles.size(); i++)
+        {
+            System.out.println(articles.get(i));
+            articleTag.findArticleTag(articles.get(i).getId());
+        }
+        System.out.println("which one article do you want update? (entre id)");
+        idArticle = input.nextInt();
+        System.out.println("enter title: ");
+        String title = input.next();
+        System.out.println("enter brief: ");
+        String brief = input.next();
+        System.out.println("enter content");
+        String content = input.next();
+        System.out.println("do you want published (on or off) ");
+        String published = input.next();
+        boolean isPublished = false;
+        Timestamp publishDate = null;
+        if (published.equals("on")) {
+            publishDate= new Timestamp(System.currentTimeMillis())  ;
+            isPublished = true;
+        } else System.out.println();
+        System.out.println("enter price : ");
+        int price = input.nextInt();
+        showCategory();
+        System.out.println("which category {enter id} ");
+        int categoryId = input.nextInt();
+        System.out.println("10 "+authId);
+
+        articleUpdate.update
+                (idArticle, title, brief, content, isPublished, publishDate, categoryId, price, authId);
+        System.out.println("11 "+authId);
+
     }
 
     private void showUserLoginMenu() {

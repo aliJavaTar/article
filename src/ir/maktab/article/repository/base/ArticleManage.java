@@ -5,6 +5,7 @@ import ir.maktab.article.entity.User;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.List;
 
 public interface ArticleManage {
@@ -21,7 +22,7 @@ public interface ArticleManage {
     boolean removeArticle(int id) throws SQLException;
 
     boolean update(int id, String title, String brief, String content,
-                   boolean isPublished, String publishDate, int categoryIde,int price) throws SQLException;
+                   boolean isPublished, Timestamp publishDate, int categoryIde, int price, int userId) throws SQLException;
 
     List<Article> getArticlesByUserId(int userId) throws SQLException;
 

@@ -119,7 +119,8 @@ public class DbArticle {
 
     public boolean insertArticle(Article article) throws SQLException {
         openConnection();
-        String query = "insert into articles(title,brief,content,user_id,category_id,price) values (?,?,?,?,?,?)";
+        String query = "insert into articles(title,brief,content,user_id,category_id,price)" +
+                " values (?,?,?,?,?,?)";
         statement = connection.prepareStatement(query);
         statement.setString(1, article.getTitle());
         statement.setString(2, article.getBrief());
@@ -196,5 +197,16 @@ public class DbArticle {
         return arrayList;
     }
 
-
+    public int findMaxId() throws SQLException {
+        openConnection();
+        String query ="select max(id) as id from articles";
+        statement=connection.prepareStatement(query);
+        ResultSet resultSet = statement.executeQuery();
+        int id=0;
+        while (resultSet.next())
+        {
+            id =resultSet.getInt("id");
+        }
+        return id;
+    }
 }

@@ -53,4 +53,10 @@ public class ArticleManagerImplement implements ArticleManage
     public List<Article> getArticlesByUserId(int userId) throws SQLException {
         return dbArticle.findArticlesByUserid(userId);
     }
+
+    @Override
+    public int getMaxId() throws SQLException {
+        return dbArticle.findMaxId();
+    }
+
 }

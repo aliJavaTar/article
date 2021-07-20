@@ -5,14 +5,13 @@ import ir.maktab.article.entity.Category;
 import ir.maktab.article.entity.Tag;
 import ir.maktab.article.entity.User;
 import ir.maktab.article.repository.Admin;
-import ir.maktab.article.repository.service.ArticleManagerImplement;
-import ir.maktab.article.repository.service.CategoryManagerImplement;
-import ir.maktab.article.repository.service.TagManagerImplement;
-import ir.maktab.article.repository.service.UserManagerImplement;
+import ir.maktab.article.repository.service.*;
 
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
@@ -73,29 +72,31 @@ public class SystemArticle {
         } else System.out.println("خودتی");
     }
 
-    private void loginAdmin()
-            throws SQLException {
+    private void loginAdmin() throws SQLException {
         Admin admin = new Admin();
         System.out.println("enter you username");
         String username = input.next();
         System.out.println("enter your password");
         String password = input.next();
-        if (username.equals(admin.getUsername()) && password.equals(admin.getPassword())) {
+        if (username.equals(admin.getUsername()) && password.equals(admin.getPassword()))
             admin.verifyUser();
-        } else System.out.println("username or password false");
+
+        else System.out.println("username or password false");
 
     }
 
     //////////////////////////////////////////////////////////////////////////////
     String condition = "";
 
-    private void showArticle() throws SQLException {
+    private void showArticle() throws SQLException
+    {
         ArticleManagerImplement articles = new ArticleManagerImplement();
         List<Article> articleList = articles.getAllArticle();
         Article article;
         System.out.println("what kind of article do you want? \n 1) MonetaryArticles \n 2) FreeArticles");
         int select = input.nextInt();
-        if (select == 1) {
+        if (select == 1)
+        {
             showMonetaryArticles(articleList);
         } else if (select == 2)
             showFreeArticles(articleList);
@@ -107,7 +108,6 @@ public class SystemArticle {
         System.out.print("enter id: ");
         int id = input.nextInt();
 
-
         article = articles.getArticleById(id, condition);
 
         if (article.getId() != 0)
@@ -116,24 +116,31 @@ public class SystemArticle {
             System.out.println("not found");
     }
 
-    private void showMonetaryArticles(List<Article> articleList) {
+    private void showMonetaryArticles(List<Article> articleList) throws SQLException {
+        ArticleTagMangerImplement tags = new ArticleTagMangerImplement();
         condition = "money";
-        for (int i = 0; i < articleList.size(); i++) {
-            if (articleList.get(i).getPrice() > 0) {
+        for (int i = 0; i < articleList.size(); i++)
+        {
+            if (articleList.get(i).getPrice() > 0)
+            {
                 System.out.println("id: " + articleList.get(i).getId() + " title : "
                         + articleList.get(i).getTitle() + " Brief: " +
                         articleList.get(i).getBrief() + " price: " + articleList.get(i).getPrice());
+                       System.out.println("Tags : "+tags.findArticleTag(articleList.get(i).getId()));
             }
         }
     }
 
-    private void showFreeArticles(List<Article> articleList) {
+    private void showFreeArticles(List<Article> articleList) throws SQLException {
         condition = "free";
-        for (int i = 0; i < articleList.size(); i++) {
-            if (articleList.get(i).getPrice() == 0) {
+        for (int i = 0; i < articleList.size(); i++)
+        {ArticleTagMangerImplement tags = new ArticleTagMangerImplement();
+            if (articleList.get(i).getPrice() == 0)
+            {
                 System.out.println("id: " + articleList.get(i).getId() + " title : "
                         + articleList.get(i).getTitle() + " Brief: " +
                         articleList.get(i).getBrief() + " price: " + articleList.get(i).getPrice());
+                System.out.println("Tags : "+tags.findArticleTag(articleList.get(i).getId()));
             }
         }
     }
@@ -247,33 +254,61 @@ public class SystemArticle {
             createCategory.insertCategory(category.getTitle(), category.getDescription());
             showCategory();
             createArticle(createCategory, article, createArticle, authId);
-
             addTag();
         } else if (answer.equals("no")) {
             createArticle(createCategory, article, createArticle, authId);
             addTag();
         }
     }
+
     //////////////////////////////////
-    boolean flag=true;
+    boolean flag = true, tagFlag = true;
+
     private void addTag() throws SQLException {
         Tag tag = new Tag();
         TagManagerImplement tagManage = new TagManagerImplement();
+        ArticleTagMangerImplement tagRel = new ArticleTagMangerImplement();
+        ArticleManagerImplement articleMange = new ArticleManagerImplement();
         String answer;
         showTag();
         do {
             System.out.println("Do you want new TAG? (yes or no)");
             answer = input.next();
-            if (answer.equals("yes"))
-            {
+            if (answer.equals("yes")) {
                 tag = inputTagField(tag);
                 tagManage.insertTag(tag.getTitle());
                 showTag();
                 addTag();
             } else if (answer.equals("no"))
-                flag=false;
-
+                flag = false;
         } while (flag);
+
+        addTagToArticle(tag, tagManage, tagRel, articleMange);
+
+
+    }
+
+    private void addTagToArticle(Tag tag, TagManagerImplement tagManage,
+                                 ArticleTagMangerImplement tagRel,
+                                 ArticleManagerImplement articleMange) throws SQLException {
+        String answer;
+        int tagId;
+        showTag();
+        do {
+            System.out.println("would you want add new tag to article ? (yes or no) ");
+            answer = input.next();
+            if (answer.equals("yes")) {
+                System.out.println("which tag do you want add to article ? (enter id) ");
+                tagId = input.nextInt();
+                tag = tagManage.getTagById(tagId);
+                if (tag.getId() == tagId) {
+                    tagRel.insertArticleTag(articleMange.getMaxId(), tagId);
+                    showTag();
+                } else System.out.println("tag not found ! ");
+            } else
+                tagFlag = false;
+
+        } while (tagFlag);
     }
 
 
@@ -296,17 +331,20 @@ public class SystemArticle {
         return tag;
     }
 
-    private void createArticle(CategoryManagerImplement createCategory,
-                               Article article, ArticleManagerImplement creatArticle, int authId)
-            throws SQLException {
+    int idArticle;
+
+    private void createArticle(CategoryManagerImplement createCategory, Article article,
+                               ArticleManagerImplement creatArticle, int authId) throws SQLException {
         System.out.println("Which one category do you want [ Enter Id Category ] ?");
         int categoryId = input.nextInt();
         Category categoryById = createCategory.getCategoryById(categoryId);
         article = inputArticleField(article);
         if (categoryById != null) {
             // userId=0
-            creatArticle.insertArticle(article.getTitle(), article.getBrief(),
-                    article.getContent(), authId, categoryById.getId(), article.getPrice());
+            creatArticle.insertArticle
+                    (article.getTitle(), article.getBrief(), article.getContent(), authId,
+                            categoryById.getId(), article.getPrice());
+
 
         } else System.out.println("category id not exist");
     }
@@ -352,8 +390,10 @@ public class SystemArticle {
         return category;
     }
 
-    private void editSpecificArticle() {
+    private void editSpecificArticle() throws SQLException {
         ArticleManagerImplement articleUpdate = new ArticleManagerImplement();
+        articleUpdate.getAllArticle();
+//        articleUpdate.update()
         //  articleUpdate.update()
     }
 
@@ -407,7 +447,7 @@ public class SystemArticle {
         return user;
     }
 
-    public void systemMenu() {
+    private void systemMenu() {
         System.out.println("1) Login User ");
         System.out.println("2) Register ");
         System.out.println("3) Watch Article ");
